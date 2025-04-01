@@ -12,7 +12,7 @@ MVideo Price Monitor
 
 1. Клонируйте репозиторий:
 ```bash
-https://github.com/
+https://github.com/fa2fin/fa2finMvideo.git
 cd mvideo-scraper
 ```
 2. Установите зависимости:
@@ -44,6 +44,11 @@ prefect server start
 
 ```bash
 prefect worker start -t process
+```
+Если воркер будет ругаться на API, то надо в терминале перед запуском написать
+```bash
+$env:PREFECT_API_URL="http://127.0.0.1:4200/api"
+echo $env:PREFECT_API_URL
 ```
 
 Запустите flow:
