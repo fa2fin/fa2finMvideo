@@ -31,8 +31,8 @@ pip install -r requirements.txt
 - Ручной запуск скрапера
 ```bash
 python -m scraper.main
-Результат сохраняется в data/latest_scrape.json
 ```
+Результат сохраняется в ```data/latest_scrape.json```
 
 - Автоматизация через Prefect
 
