@@ -1,0 +1,8 @@
+{
+    "total_products": 48,
+    "min_price": 100999,
+    "max_price": 9999,
+    "unique_brands": 0,
+    "timestamp": "2025-04-10T17:26:57.137306",
+    "plot_path": "data\\results\\price_distribution_20250410_172657.png"
+}
