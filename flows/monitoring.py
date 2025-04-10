@@ -116,7 +116,7 @@ if __name__ == "__main__":
 
     monitor_prices.serve(
         name="mvideo-price-monitoring",
-        interval=timedelta(hours=1),
+        interval=timedelta(hours=24),
         parameters={
             "url": "https://www.mvideo.ru/smartfony-i-svyaz-10/smartfony-205"
         }
