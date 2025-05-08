@@ -1,3 +1,5 @@
+from scraper.database import DatabaseManager
+from scraper.utils import save_to_json
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -6,7 +8,7 @@ import time
 from datetime import datetime
 from typing import List, Dict
 import logging
-from scraper.utils import save_to_json
+
 
 logger = logging.getLogger(__name__)
 
@@ -69,9 +71,10 @@ def scrape_mvideo(url: str) -> List[Dict]:
     except Exception as e:
         logger.error(f"Ошибка при скрапинге: {e}")
     finally:
-        driver.quit()
-
-    return products
+        try:
+            driver.quit()  # Используйте quit() вместо close()
+        except Exception as e:
+            logger.error(f"Ошибка при закрытии драйвера: {e}")
 
 
 def extract_product_data(card) -> Dict:
@@ -97,5 +100,8 @@ def extract_product_data(card) -> Dict:
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     data = scrape_mvideo("https://www.mvideo.ru/smartfony-i-svyaz-10/smartfony-205")
-    save_to_json(data, "data/latest_scrape.json")
-    print(f"Собрано {len(data)} товаров")
+
+    # Используем DatabaseManager вместо save_to_json
+    db = DatabaseManager()
+    scrape_id = "manual_run_" + datetime.now().strftime("%Y%m%d_%H%M%S")
+    db.save_products(data, scrape_id)  # <-- Здесь вызывается save_products
