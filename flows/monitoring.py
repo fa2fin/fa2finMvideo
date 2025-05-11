@@ -85,8 +85,8 @@ def save_products(self, products: list, scrape_id: str):
 def analyze_task(data: List[Dict]):
     """Задача для анализа данных"""
     try:
-        analyzer = DataAnalyzer()  # Создаём экземпляр анализатора
-        return analyzer.analyze_last_scrape()  # Используем новый метод
+        analyzer = DataAnalyzer()
+        return analyzer.analyze_last_scrape()
     except Exception as e:
         logger.error(f"Ошибка при анализе данных: {str(e)}")
         raise

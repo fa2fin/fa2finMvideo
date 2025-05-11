@@ -74,24 +74,32 @@ class DatabaseManager:
                     conn.close()
 
     def save_products(self, products: List[Dict], scrape_id: str) -> None:
-        """Сохраняет список продуктов в базу данных"""
         if not products:
             logger.warning("Пустой список продуктов для сохранения")
             return
+
+        logger.info(f"Сохранение {len(products)} товаров...")
+
         with self.get_connection() as conn:
             cursor = conn.cursor()
-            for product in products:
-                cursor.execute("""
-                    INSERT INTO products (name, price, url, brand, timestamp, scrape_id)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                """, (
-                    product.get("name"),
-                    product.get("price"),
-                    product.get("url"),
-                    self._extract_brand(product.get("name")),
-                    product.get("timestamp"),
-                    scrape_id
-                ))
+            for idx, product in enumerate(products, 1):
+                try:
+                    cursor.execute("""
+                        INSERT INTO products (name, price, url, brand, timestamp, scrape_id)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    """, (
+                        product["name"],
+                        product["price"],
+                        product["url"],
+                        product["brand"],
+                        product["timestamp"],
+                        scrape_id
+                    ))
+                    logger.debug(f"Сохранен товар {idx}/{len(products)}: {product['name']}")
+                except KeyError as e:
+                    logger.error(f"Пропущен товар: отсутствует ключ {e}")
+                except sqlite3.Error as e:
+                    logger.error(f"Ошибка SQLite: {e}")
             conn.commit()
             cursor.close()
 
@@ -118,10 +126,9 @@ class DatabaseManager:
         logger.info(f"Сохранены результаты анализа (scrape_id: {scrape_id})")
 
     def _extract_brand(self, product_name: str) -> str:
-        """Извлекает бренд из названия продукта (простая реализация)"""
+        """Извлекает бренд из названия продукта"""
         if not product_name:
             return None
-        # Простая логика извлечения бренда - первое слово в названии
         return product_name.split()[0] if product_name else None
 
     def get_last_scrape_data(self) -> List[Dict]:
@@ -144,4 +151,12 @@ class DatabaseManager:
                 FROM products 
                 WHERE scrape_id = ?
             """, (last_scrape["scrape_id"],))
+            return [dict(row) for row in cursor.fetchall()]
+
+    def execute_query(self, query: str, params: tuple = ()) -> List[Dict]:
+        """Выполняет SQL-запрос и возвращает результат"""
+        with self.get_connection() as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            cursor.execute(query, params)
             return [dict(row) for row in cursor.fetchall()]

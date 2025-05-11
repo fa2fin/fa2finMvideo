@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MVideo Data Explorer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Фильтр товаров</h1>
+        <div class="filters">
+            <input type="number" id="minPrice" placeholder="Минимальная цена">
+            <input type="number" id="maxPrice" placeholder="Максимальная цена">
+            <input type="text" id="brand" placeholder="Бренд">
+            <button onclick="loadProducts()">Поиск</button>
+        </div>
+        <table id="productsTable">
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Цена</th>
+                    <th>Бренд</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <script>
+        async function loadProducts() {
+            const minPrice = document.getElementById('minPrice').value;
+            const maxPrice = document.getElementById('maxPrice').value;
+            const brand = document.getElementById('brand').value;
+
+            const params = new URLSearchParams({
+                min_price: minPrice,
+                max_price: maxPrice,
+                brand: brand
+            });
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/products?${params}`);
+                const data = await response.json();
+                const tbody = document.querySelector('#productsTable tbody');
+                tbody.innerHTML = data.data.map(product => `
+                    <tr>
+                        <td>${product.name}</td>
+                        <td>${product.price}</td>
+                        <td>${product.brand}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Ошибка:', error);
+            }
+        }
+    </script>
+</body>
+</html>

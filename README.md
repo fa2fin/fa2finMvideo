@@ -62,3 +62,36 @@ python -m flows.monitoring
 python -m scraper.analyzedata
 ```
 
+Для запуска API
+```bash
+ python -m api.app
+```
+появляется надпись
+* Running on http://127.0.0.1:5000
+
+Запускаем web интерфейс
+```bash
+web/index.html
+```
+
+Получаем штуку вида
+
+![img.png](img.png)
+
+Результат вывода такой штуки может быть
+
+![img_1.png](img_1.png)
+
+или
+
+![img_2.png](img_2.png)
+
+
+Так же можно посмотреть просто базу данных
+```bash
+http://localhost:5000/api/products
+```
+
+Результат вывода будет 
+
+![img_3.png](img_3.png)
